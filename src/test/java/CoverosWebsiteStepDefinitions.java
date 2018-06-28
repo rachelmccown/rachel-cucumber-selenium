@@ -3,12 +3,16 @@ import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -18,26 +22,6 @@ import java.util.concurrent.TimeUnit;
 public class CoverosWebsiteStepDefinitions {
 
     WebDriver driver = null;
-
-    private static java.lang.String getOs() {
-        java.lang.String os = System.getProperty("os.name");
-        os = os.substring(0, os.indexOf(" ")).toLowerCase();
-        return os;
-    }
-
-    public static void setDriver(String browser) {
-        java.lang.String os = getOs();
-        String driverName = "";
-        if(browser.equals("Firefox")) {
-            driverName = "geckodriver";
-        } else if(browser.equals("Chrome")){
-            driverName = "chromedriver";
-        }
-        if (os.equals("windows")) {
-            driverName += ".exe";
-        }
-        System.setProperty("webdriver.gecko.driver", "src/test/drivers/" + driverName);
-    }
 
     public void hover(String obj){
         Actions action = new Actions(driver);
@@ -55,7 +39,9 @@ public class CoverosWebsiteStepDefinitions {
 
     public void click(String obj){
         switch (obj) {
-            case("SecureCI"): driver.findElement(By.linkText("SecureCI")).click(); break;
+            case("SecureCI"): //driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+                              driver.findElement(By.linkText("SecureCI")).click();
+                              break;
             case("Blog"): driver.findElement(By.linkText("Read more")).click(); break;
             case("Training"): hover("Services"); driver.findElement(By.linkText("Training")).click(); break;
             case("Coveros Twitter"): driver.findElement(By.xpath("//*[@id=\"text-11\"]/div/p/a[2]/img")).click(); break;
@@ -63,11 +49,13 @@ public class CoverosWebsiteStepDefinitions {
         }
     }
 
-
     @Before
     public void openBrowser() {
-        setDriver("Chrome");
-        driver = new FirefoxDriver();
+        switch (System.getProperty("browser")) {
+            case("Chrome"): WebDriverManager.chromedriver().setup(); driver = new ChromeDriver(); break;
+            case("Firefox"): WebDriverManager.firefoxdriver().setup(); driver = new FirefoxDriver(); break;
+            case("Edge"): WebDriverManager.edgedriver().setup(); driver = new EdgeDriver(); break;
+        }
     }
 
     @When("^I open the Coveros website$")
