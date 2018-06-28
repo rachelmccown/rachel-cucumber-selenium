@@ -4,25 +4,26 @@
 Feature: Navigating Coveros Website
 
 Scenario: SecureCI Submission Message Success
-    Given I have opened the Chrome browser
-    When I open Coveros website
-    And I click SecureCI
+    When I open the Coveros website
+    And I go to the SecureCI page
     And I enter in my first name as Bob
-    And I enter in my Last Name as Smith
-    And I enter in my EMAIL as email@email.com
-    And I enter in my CoMPAny as Company
-    And to download SecureCI I click submit
-    Then the message should say Your message was sent successfully. Thanks.
+    And I enter in my last name as Smith
+    And I enter in my email as email@email.com
+    And I enter in my company as Company
+    And I download SecureCI
+    Then the SecureCI confirmation message says "Your message was sent successfully. Thanks."
 
-Scenario: Verify Recent Blog Posts
-    Given I have opened the Chrome browser
-    When I open Coveros website
-    And I click Blog
-    Then the page should display Recent Blogs
+Scenario: View Recent Blog Posts
+    When I open the Coveros website
+    And I go to the Blog page
+    Then the page displays Recent Blogs
 
-Scenario: Navigate to Training Page
-    Given I have opened the Chrome browser
-    When I open Coveros website
-    And I hover over Services Dropdown
-    And I click Training
-    Then the title should be Training - Coveros
+Scenario: Navigate to the Training Page
+    When I open the Coveros website
+    And I go to the Training page
+    Then the title of the page is Training - Coveros
+
+Scenario: Navigate to Coveros Twitter Account
+    When I open the Coveros website
+    And I go to the Coveros Twitter page
+    Then the title of the page is Coveros, Inc (@Coveros) | Twitter

@@ -1,21 +1,21 @@
 import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
-import org.testng.AssertJUnit;
 
 import java.util.concurrent.TimeUnit;
 
-public class coverosWebsiteDefs {
+public class CoverosWebsiteStepDefinitions {
 
     WebDriver driver = null;
 
@@ -39,41 +39,41 @@ public class coverosWebsiteDefs {
         System.setProperty("webdriver.gecko.driver", "src/test/drivers/" + driverName);
     }
 
-    @Given("^I have opened the (.*) browser$")
-    public void openBrowser(String browser) {
-        setDriver(browser);
-        driver = new FirefoxDriver();
-    }
-
-    @When("^I open Coveros website$")
-    public void goToCoveros() {
-        driver.navigate().to("https://www.coveros.com/");
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-    }
-
-    @And("^I click (.*)$")
-    public void clickPageObject(String obj) {
-        switch (obj) {
-            case("SecureCI"): driver.findElement(By.linkText("SecureCI")).click(); break;
-            case("Blog"): driver.findElement(By.linkText("Read more")).click(); break;
-            case("Training"): driver.findElement(By.linkText("Training")).click(); break;
-            default: System.out.println("Page Object not Found"); break;
-        }
-    }
-
-    @And("^I hover over (.*)$")
-    public void hoverOnPageObject(String obj){
+    public void hover(String obj){
         Actions action = new Actions(driver);
         WebElement hoverObject = null;
         switch (obj) {
             case("Products"): hoverObject = driver.findElement(By.linkText("Products")); break;
-            case("Services Dropdown"): hoverObject = driver.findElement(By.linkText("Services")); break;
+            case("Services"): hoverObject = driver.findElement(By.linkText("Services")); break;
             case("Thought Leadership"): hoverObject = driver.findElement(By.linkText("Thought Leadership")); break;
             case("About Us"): hoverObject = driver.findElement(By.linkText("About Us")); break;
             default: System.out.println("Object not Found"); break;
         }
         if(hoverObject != null)
             action.moveToElement(hoverObject).build().perform();
+    }
+
+    public void click(String obj){
+        switch (obj) {
+            case("SecureCI"): driver.findElement(By.linkText("SecureCI")).click(); break;
+            case("Blog"): driver.findElement(By.linkText("Read more")).click(); break;
+            case("Training"): hover("Services"); driver.findElement(By.linkText("Training")).click(); break;
+            case("Coveros Twitter"): driver.findElement(By.xpath("//*[@id=\"text-11\"]/div/p/a[2]/img")).click(); break;
+            default: System.out.println("Page Object not Found"); break;
+        }
+    }
+
+
+    @Before
+    public void openBrowser() {
+        setDriver("Chrome");
+        driver = new FirefoxDriver();
+    }
+
+    @When("^I open the Coveros website$")
+    public void goToCoveros() {
+        driver.navigate().to("https://www.coveros.com/");
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
     }
 
     @And("^I enter in my (.*) as (.*)$")
@@ -88,24 +88,29 @@ public class coverosWebsiteDefs {
         }
     }
 
-    @And("^to download SecureCI I click submit$")
+    @And("^I download SecureCI$")
     public void submitSecureCI() {
         driver.findElement(By.xpath("//*[@id=\"wpcf7-f1227-o1\"]/form/p")).submit();
     }
 
-    @Then("^the title should be (.*)$")
+    @And("^I go to the (.*) page$")
+    public void navigateTo(String page){
+        click(page);
+    }
+
+    @Then("^the title of the page is (.*)$")
     public void confirmTitle(String title) {
         Assert.assertEquals(driver.getTitle(), title);
     }
 
-    @Then("^the message should say (.*)$")
+    @Then("^the SecureCI confirmation message says \"(.*)\"$")
     public void confirmMessage(String message){
         WebDriverWait wait = new WebDriverWait(driver, 10);
         WebElement submitMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"wpcf7-f1227-o1\"]/form/div[2]")));
         Assert.assertEquals(submitMessage.getText(), message);
     }
 
-    @Then("^the page should display (.*)$")
+    @Then("^the page displays (.*)$")
     public void confirmPageObjectDisplayed(String pageObj){
         switch (pageObj) {
             case("Recent Blogs"): Assert.assertTrue(driver.findElement(By.id("recent-posts-4")).isDisplayed()); break;
