@@ -57,6 +57,11 @@ public class CoverosWebsiteStepDefinitions {
         }
     }
 
+    @And("^I view the training schedule for (.*)$")
+    public void trainingSchedules(String month){
+        //TODO Impmelent this method
+    }
+
     @And("^I download SecureCI$")
     public void submitSecureCI() {
         driver.findElement(By.xpath("//*[@id=\"wpcf7-f1227-o1\"]/form/p")).submit();
@@ -101,18 +106,25 @@ public class CoverosWebsiteStepDefinitions {
     @Then("^the newest blog post is dated (.*)$")
     public void checkBlogDate(String date){
         selActions.scrollToElement(driver.findElement(By.id("sidebar")));
+        String pageDate = "";
+        Assert.assertEquals(date, pageDate);
     }
 
     @Then("^the CEO should be (.*)$")
     public void ceoCheck(String ceo){
         driver.findElement(By.xpath("//*[@id=\"ats-layout-7266\"]/ul[2]/li[1]/div")).click();
         WebElement name = driver.findElement(By.className("name"));
-        System.out.println("Nothing");
+        Assert.assertEquals("Jeff Payne", name.getText());
     }
 
     @Then("^the confirmation message says (.*)$")
     public void confirmEmailSent(){
         System.out.print("confirmed");
+    }
+
+    @Then("^there should be (.*) training courses available")
+    public void trainingCourses(){
+        //TODO Implement this method
     }
 
     @After
