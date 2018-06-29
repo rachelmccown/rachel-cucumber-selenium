@@ -21,41 +21,22 @@ import java.util.concurrent.TimeUnit;
 
 public class CoverosWebsiteStepDefinitions {
 
-    WebDriver driver = null;
-
-    public void hover(String obj){
-        Actions action = new Actions(driver);
-        WebElement hoverObject = null;
-        switch (obj) {
-            case("Products"): hoverObject = driver.findElement(By.linkText("Products")); break;
-            case("Services"): hoverObject = driver.findElement(By.linkText("Services")); break;
-            case("Thought Leadership"): hoverObject = driver.findElement(By.linkText("Thought Leadership")); break;
-            case("About Us"): hoverObject = driver.findElement(By.linkText("About Us")); break;
-            default: System.out.println("Object not Found"); break;
-        }
-        if(hoverObject != null)
-            action.moveToElement(hoverObject).build().perform();
-    }
-
-    public void click(String obj){
-        switch (obj) {
-            case("SecureCI"): //driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
-                              driver.findElement(By.linkText("SecureCI")).click();
-                              break;
-            case("Blog"): driver.findElement(By.linkText("Read more")).click(); break;
-            case("Training"): hover("Services"); driver.findElement(By.linkText("Training")).click(); break;
-            case("Coveros Twitter"): driver.findElement(By.xpath("//*[@id=\"text-11\"]/div/p/a[2]/img")).click(); break;
-            default: System.out.println("Page Object not Found"); break;
-        }
-    }
+    WebDriver driver;
+    SeleniumImplementations selActions;
 
     @Before
     public void openBrowser() {
-        switch (System.getProperty("browser")) {
+        String browser = System.getProperty("browser");
+        if(browser == null){
+            browser = "";
+        }
+        switch (browser) {
             case("Chrome"): WebDriverManager.chromedriver().setup(); driver = new ChromeDriver(); break;
             case("Firefox"): WebDriverManager.firefoxdriver().setup(); driver = new FirefoxDriver(); break;
             case("Edge"): WebDriverManager.edgedriver().setup(); driver = new EdgeDriver(); break;
+            default: WebDriverManager.chromedriver().setup(); driver = new ChromeDriver(); break;
         }
+        selActions = new SeleniumImplementations(driver);
     }
 
     @When("^I open the Coveros website$")
@@ -81,9 +62,20 @@ public class CoverosWebsiteStepDefinitions {
         driver.findElement(By.xpath("//*[@id=\"wpcf7-f1227-o1\"]/form/p")).submit();
     }
 
+
     @And("^I go to the (.*) page$")
     public void navigateTo(String page){
-        click(page);
+        selActions.click(page);
+    }
+
+    @And("^I email a presentation to (.*) from (.*)$")
+    public void emailPresentation(String email, String from){
+
+        selActions.scrollToElement(driver.findElement(By.id("sidebar")));
+        driver.findElement(By.xpath("//*[@id=\"player\"]/div[2]/div/div[3]/button/i")).click();
+        driver.findElement(By.id("share-email-to")).sendKeys(email);
+        driver.findElement(By.id("share-email-name")).sendKeys(from);
+        driver.findElement(By.id("share-email-send")).click();
     }
 
     @Then("^the title of the page is (.*)$")
@@ -106,9 +98,27 @@ public class CoverosWebsiteStepDefinitions {
         }
     }
 
+    @Then("^the newest blog post is dated (.*)$")
+    public void checkBlogDate(String date){
+        selActions.scrollToElement(driver.findElement(By.id("sidebar")));
+    }
+
+    @Then("^the CEO should be (.*)$")
+    public void ceoCheck(String ceo){
+        driver.findElement(By.xpath("//*[@id=\"ats-layout-7266\"]/ul[2]/li[1]/div")).click();
+        WebElement name = driver.findElement(By.className("name"));
+        System.out.println("Nothing");
+    }
+
+    @Then("^the confirmation message says (.*)$")
+    public void confirmEmailSent(){
+        System.out.print("confirmed");
+    }
+
     @After
     public void afterClass(){
-        driver.quit();
+        if(driver != null)
+            driver.quit();
     }
 
 }

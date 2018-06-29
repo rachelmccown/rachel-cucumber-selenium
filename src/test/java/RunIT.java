@@ -7,4 +7,4 @@ import org.junit.runner.RunWith;
         format = {"pretty", "html:target/cucumber"})
 //, glue = {"rachel-cucumber-selenium"}
 
-public class RunTest { }
+public class RunIT { }
