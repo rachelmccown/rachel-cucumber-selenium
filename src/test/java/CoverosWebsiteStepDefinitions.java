@@ -57,9 +57,11 @@ public class CoverosWebsiteStepDefinitions {
         }
     }
 
-    @And("^I view the training schedule for (.*)$")
-    public void trainingSchedules(String month){
-        //TODO Impmelent this method
+    @And("^I navigate to the Training Schedule$")
+    public void navigateToTrainingSchedule(){
+        WebElement element = driver.findElement(By.id("evcalwidget_sc-3"));
+        Actions builder = new Actions(driver);
+        builder.moveToElement(element);
     }
 
     @And("^I download SecureCI$")
@@ -69,7 +71,7 @@ public class CoverosWebsiteStepDefinitions {
 
 
     @And("^I go to the (.*) page$")
-    public void navigateTo(String page){
+    public void goTo(String page){
         selActions.click(page);
     }
 
@@ -123,8 +125,8 @@ public class CoverosWebsiteStepDefinitions {
     }
 
     @Then("^there should be (.*) training courses available")
-    public void trainingCourses(){
-        //TODO Implement this method
+    public void trainingCourses(String numOfCourses){
+        System.out.println(numOfCourses);
     }
 
     @After
