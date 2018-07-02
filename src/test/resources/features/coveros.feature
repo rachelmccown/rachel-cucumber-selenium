@@ -34,24 +34,26 @@ Scenario: Check if there is Agile Training in the current month
     And I navigate to the Training Schedule
     Then there are training courses available
 
-#  Isn't Responsive to new blog posts being put up - identifier issue?
+#  Probably isn't Responsive to new blog posts being put up - identifier issue?
 Scenario: Get newest blog post date
     When I go to the Blog page
     Then the newest blog post is dated June 27, 2018
 
+#Webdriver code needs to be separated out
+Scenario: Find the CEO of Coveros
+    When I go to the Our Team page
+    Then the CEO should be Jeff Payne
+
+# Issue with looking at 'Everuone' on Employee page (xpaths issue)
+Scenario: Find a specific employee on the website
+    When I go to the Our Team page
+    And I navigate to Everyone
+    Then Jeff Payne is listed
+
 ##  Can't find the share button on a presenation (xpaths issue)
+##  THEN Statement is unimplemented -> No point rn
 #Scenario: Email a Presentation
 #  When I go to the Presentations page
 #  And I email a presentation to rachel.mccown@coveros.com from Tester
 #  Then the confirmation message says "Some Stuff Here"
 
-## Issue with identifying CEO (xpaths issue)
-#Scenario: Find the CEO of Coveros
-#  When I go to the Our Team page
-#  Then the CEO should be Jeff Payne
-#
-## Issue with finding specific person (xpaths issue), THEN Statement unimplemented
-#Scenario: Find a specific employee on the website
-#    When I go to the Our Team page
-#    And I navigate to Everyone
-#    Then Jeff Payne is listed

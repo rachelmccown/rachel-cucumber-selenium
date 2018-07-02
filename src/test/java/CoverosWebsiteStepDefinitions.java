@@ -17,6 +17,8 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class CoverosWebsiteStepDefinitions {
@@ -63,6 +65,9 @@ public class CoverosWebsiteStepDefinitions {
 
     @And("^I navigate to Everyone$")
     public void navigateToEveryone(){
+        selActions.scrollToElement(driver.findElement(By.id("team")));
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("team")));
         driver.findElement(By.xpath("//*[@id=\"ats-layout-7266\"]/ul[1]/li[1]/div")).click();
     }
 
@@ -93,8 +98,6 @@ public class CoverosWebsiteStepDefinitions {
     @Then("^the title of the page is (.*)$")
     public void confirmTitle(String title) {
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        String actual = driver.getTitle();
-        String expected = title;
         Assert.assertEquals(driver.getTitle(), title);
 
     }
@@ -125,9 +128,17 @@ public class CoverosWebsiteStepDefinitions {
 
     @Then("^the CEO should be (.*)$")
     public void ceoCheck(String ceo){
-        driver.findElement(By.xpath("//*[@id=\"ats-layout-7266\"]/ul[2]/li[1]/div")).click();
-        WebElement name = driver.findElement(By.className("name"));
-        Assert.assertEquals("Jeff Payne", name.getText());
+
+        boolean isCEO = false;
+        WebElement element = driver.findElement(By.id("team"));
+        List<String> employees = Arrays.asList(element.getText().split("\n"));
+        if(employees.contains(ceo) == true){
+            int index = employees.indexOf(ceo);
+            if(employees.get(index+1).contains("CEO")){
+                isCEO = true;
+            }
+        }
+        Assert.assertEquals(true, isCEO);
     }
 
     @Then("^the confirmation message says (.*)$")
@@ -154,7 +165,14 @@ public class CoverosWebsiteStepDefinitions {
 
     @Then("^(.*) is listed$")
     public void findEmployee(String employee){
-        System.out.println("Unimplemented");
+        List<Employee> employees = selActions.loadEmployees();
+        boolean isOnWebsite = false;
+        for(Employee e: employees){
+            if(e.getName().equals(employee)){
+                isOnWebsite = true;
+            }
+        }
+        Assert.assertTrue(isOnWebsite);
     }
 
     @After
