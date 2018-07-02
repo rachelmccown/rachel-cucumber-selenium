@@ -59,9 +59,11 @@ public class CoverosWebsiteStepDefinitions {
 
     @And("^I navigate to the Training Schedule$")
     public void navigateToTrainingSchedule(){
-        WebElement element = driver.findElement(By.id("evcalwidget_sc-3"));
-        Actions builder = new Actions(driver);
-        builder.moveToElement(element);
+    }
+
+    @And("^I navigate to Everyone$")
+    public void navigateToEveryone(){
+        driver.findElement(By.xpath("//*[@id=\"ats-layout-7266\"]/ul[1]/li[1]/div")).click();
     }
 
     @And("^I download SecureCI$")
@@ -79,7 +81,10 @@ public class CoverosWebsiteStepDefinitions {
     public void emailPresentation(String email, String from){
 
         selActions.scrollToElement(driver.findElement(By.id("sidebar")));
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+        WebElement presentation = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"player\"]/div[2]/div/div[3]/button/i")));
         driver.findElement(By.xpath("//*[@id=\"player\"]/div[2]/div/div[3]/button/i")).click();
+        presentation.click();
         driver.findElement(By.id("share-email-to")).sendKeys(email);
         driver.findElement(By.id("share-email-name")).sendKeys(from);
         driver.findElement(By.id("share-email-send")).click();
@@ -87,7 +92,11 @@ public class CoverosWebsiteStepDefinitions {
 
     @Then("^the title of the page is (.*)$")
     public void confirmTitle(String title) {
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        String actual = driver.getTitle();
+        String expected = title;
         Assert.assertEquals(driver.getTitle(), title);
+
     }
 
     @Then("^the SecureCI confirmation message says \"(.*)\"$")
@@ -108,7 +117,9 @@ public class CoverosWebsiteStepDefinitions {
     @Then("^the newest blog post is dated (.*)$")
     public void checkBlogDate(String date){
         selActions.scrollToElement(driver.findElement(By.id("sidebar")));
-        String pageDate = "";
+        //driver.findElement(By.linkText("Read More")).click();
+        WebElement element = driver.findElement(By.xpath("//*[@id=\"post-8940\"]/div[2]/span[2]/time"));
+        String pageDate = element.getText();
         Assert.assertEquals(date, pageDate);
     }
 
@@ -124,9 +135,26 @@ public class CoverosWebsiteStepDefinitions {
         System.out.print("confirmed");
     }
 
-    @Then("^there should be (.*) training courses available")
-    public void trainingCourses(String numOfCourses){
-        System.out.println(numOfCourses);
+    @Then("^there (.*) training courses? available$")
+    public void trainingCourses(String available){
+        boolean expected = true;
+        boolean actual = true;
+       if(available.equals("are not") || available.equals("is not")){
+           expected = false;
+       }
+        WebElement element = driver.findElement(By.id("evcalwidget_sc-3"));
+        Actions builder = new Actions(driver);
+        builder.moveToElement(element);
+        String [] scheduleText = element.getText().split("\n");
+        if(scheduleText[2].equals("No Events")){
+            actual = false;
+        }
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Then("^(.*) is listed$")
+    public void findEmployee(String employee){
+        System.out.println("Unimplemented");
     }
 
     @After

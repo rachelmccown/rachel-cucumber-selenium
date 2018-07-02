@@ -25,31 +25,33 @@ Scenario: Navigate to Coveros Twitter Account
     Then the title of the page is Coveros, Inc (@Coveros) | Twitter
 
 Scenario: View the Selenified README
-  When I go to the Selenified page
-  And I go to the Selenified Github page
-  Then the title of the page is selenified/README.md at develop · Coveros/selenified · GitHub
+    When I go to the Selenified page
+    And I go to the Selenified Github page
+    Then the title of the page is selenified/README.md at develop · Coveros/selenified · GitHub
 
-##  Errors Occur
+Scenario: Check if there is Agile Training in the current month
+    When I go to the Agile Transformation page
+    And I navigate to the Training Schedule
+    Then there are training courses available
+
+#  Isn't Responsive to new blog posts being put up - identifier issue?
+Scenario: Get newest blog post date
+    When I go to the Blog page
+    Then the newest blog post is dated June 27, 2018
+
+##  Can't find the share button on a presenation (xpaths issue)
 #Scenario: Email a Presentation
 #  When I go to the Presentations page
 #  And I email a presentation to rachel.mccown@coveros.com from Tester
 #  Then the confirmation message says "Some Stuff Here"
-#
-##  Errors Occur
-#Scenario: Get newest blog post date
-#  When I go to the Blog page
-#  Then the newest blog post is dated 1/2/3
-#
-##  Unimplmented
-#Scenario: Check if there is Agile Training in the current month
-#  When I go to the Agile Transformation page
-#  And I navigate to the Training Schedule
-#  Then there should be 0 training courses available
 
-# Errors Occur
+## Issue with identifying CEO (xpaths issue)
 #Scenario: Find the CEO of Coveros
 #  When I go to the Our Team page
 #  Then the CEO should be Jeff Payne
-
-# Unimplemented
+#
+## Issue with finding specific person (xpaths issue), THEN Statement unimplemented
 #Scenario: Find a specific employee on the website
+#    When I go to the Our Team page
+#    And I navigate to Everyone
+#    Then Jeff Payne is listed
