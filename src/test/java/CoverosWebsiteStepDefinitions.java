@@ -7,6 +7,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -29,14 +30,34 @@ public class CoverosWebsiteStepDefinitions {
     @Before
     public void openBrowser() {
         String browser = System.getProperty("browser");
-        if(browser == null){
+        if (browser == null) {
             browser = "";
         }
         switch (browser) {
-            case("Chrome"): WebDriverManager.chromedriver().setup(); driver = new ChromeDriver(); break;
-            case("Firefox"): WebDriverManager.firefoxdriver().setup(); driver = new FirefoxDriver(); break;
-            case("Edge"): WebDriverManager.edgedriver().setup(); driver = new EdgeDriver(); break;
-            default: WebDriverManager.chromedriver().setup(); driver = new ChromeDriver(); break;
+            case ("Chrome"):
+                WebDriverManager.chromedriver().setup();
+                driver = new ChromeDriver();
+                break;
+            case ("Firefox"):
+                WebDriverManager.firefoxdriver().setup();
+                driver = new FirefoxDriver();
+                break;
+            case ("Edge"):
+                WebDriverManager.edgedriver().setup();
+                driver = new EdgeDriver();
+                break;
+            default:
+                HtmlUnitDriver htmlunit = new HtmlUnitDriver();
+                htmlunit.setJavascriptEnabled(true);
+                driver = htmlunit;
+                break;
+        }
+        String size = System.getProperty("size");
+        if (size != null) {
+            driver.manage().window()
+                    .setSize(new Dimension(Integer.valueOf(size.split("x")[0]), Integer.valueOf(size.split("x")[1])));
+        } else {
+            driver.manage().window().maximize();
         }
         selActions = new SeleniumImplementations(driver);
     }
@@ -48,23 +69,32 @@ public class CoverosWebsiteStepDefinitions {
     }
 
     @And("^I enter in my (.*) as (.*)$")
-    public void secureCIForm(String userElement, String entry){
+    public void secureCIForm(String userElement, String entry) {
         String element = userElement.toLowerCase();
-        switch(element){
-            case("first name"): driver.findElement(By.name("FirstName")).sendKeys(entry); break;
-            case("last name"): driver.findElement(By.name("LastName")).sendKeys(entry); break;
-            case("email"): driver.findElement(By.name("email")).sendKeys(entry); break;
-            case("company"): driver.findElement(By.name("Company")).sendKeys(entry); break;
-            default: System.out.println("Form object not found.");
+        switch (element) {
+            case ("first name"):
+                driver.findElement(By.name("FirstName")).sendKeys(entry);
+                break;
+            case ("last name"):
+                driver.findElement(By.name("LastName")).sendKeys(entry);
+                break;
+            case ("email"):
+                driver.findElement(By.name("email")).sendKeys(entry);
+                break;
+            case ("company"):
+                driver.findElement(By.name("Company")).sendKeys(entry);
+                break;
+            default:
+                System.out.println("Form object not found.");
         }
     }
 
     @And("^I navigate to the Training Schedule$")
-    public void navigateToTrainingSchedule(){
+    public void navigateToTrainingSchedule() {
     }
 
     @And("^I navigate to Everyone$")
-    public void navigateToEveryone(){
+    public void navigateToEveryone() {
         selActions.scrollToElement(driver.findElement(By.id("team")));
         WebDriverWait wait = new WebDriverWait(driver, 10);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("team")));
@@ -78,16 +108,17 @@ public class CoverosWebsiteStepDefinitions {
 
 
     @And("^I go to the (.*) page$")
-    public void goTo(String page){
+    public void goTo(String page) {
         selActions.click(page);
     }
 
     @And("^I email a presentation to (.*) from (.*)$")
-    public void emailPresentation(String email, String from){
+    public void emailPresentation(String email, String from) {
 
         selActions.scrollToElement(driver.findElement(By.id("sidebar")));
         WebDriverWait wait = new WebDriverWait(driver, 10);
-        WebElement presentation = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"player\"]/div[2]/div/div[3]/button/i")));
+        WebElement presentation = wait.until(ExpectedConditions
+                .visibilityOfElementLocated(By.xpath("//*[@id=\"player\"]/div[2]/div/div[3]/button/i")));
         driver.findElement(By.xpath("//*[@id=\"player\"]/div[2]/div/div[3]/button/i")).click();
         presentation.click();
         driver.findElement(By.id("share-email-to")).sendKeys(email);
@@ -103,38 +134,49 @@ public class CoverosWebsiteStepDefinitions {
     }
 
     @Then("^the SecureCI confirmation message says \"(.*)\"$")
-    public void confirmMessage(String message){
+    public void confirmMessage(String message) {
         WebDriverWait wait = new WebDriverWait(driver, 10);
-        WebElement submitMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"wpcf7-f1227-o1\"]/form/div[2]")));
+        WebElement submitMessage = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"wpcf7-f1227-o1\"]/form/div[2]")));
         Assert.assertEquals(submitMessage.getText(), message);
     }
 
     @Then("^the page displays (.*)$")
-    public void confirmPageObjectDisplayed(String pageObj){
+    public void confirmPageObjectDisplayed(String pageObj) {
         switch (pageObj) {
-            case("Recent Blogs"): Assert.assertTrue(driver.findElement(By.id("recent-posts-4")).isDisplayed()); break;
-            default: System.out.println("Page Object " + pageObj + " Could not be located"); Assert.assertTrue(false); break;
+            case ("Recent Blogs"):
+                Assert.assertTrue(driver.findElement(By.id("recent-posts-4")).isDisplayed());
+                break;
+            default:
+                System.out.println("Page Object " + pageObj + " Could not be located");
+                Assert.assertTrue(false);
+                break;
         }
     }
 
     @Then("^the newest blog post is dated (.*)$")
-    public void checkBlogDate(String date){
+    public void checkBlogDate(String date) {
         selActions.scrollToElement(driver.findElement(By.id("sidebar")));
         //driver.findElement(By.linkText("Read More")).click();
-        WebElement element = driver.findElement(By.xpath("//*[@id=\"post-8940\"]/div[2]/span[2]/time"));
-        String pageDate = element.getText();
-        Assert.assertEquals(date, pageDate);
+        List<WebElement> elements = driver.findElements(By.tagName("article"));
+        WebElement article = driver.findElement(By.tagName("article"));
+        WebElement metadata = article.findElement(By.className("blog-post-meta"));
+        WebElement dateElement = metadata.findElement(By.className("post-meta-time"));
+
+//        WebElement element = driver.findElement(By.xpath("//*[@id=\"post-8940\"]/div[2]/span[2]/time"));
+//        String pageDate = element.getText();
+        Assert.assertEquals(date, dateElement.getText());
     }
 
     @Then("^the CEO should be (.*)$")
-    public void ceoCheck(String ceo){
+    public void ceoCheck(String ceo) {
 
         boolean isCEO = false;
         WebElement element = driver.findElement(By.id("team"));
         List<String> employees = Arrays.asList(element.getText().split("\n"));
-        if(employees.contains(ceo) == true){
+        if (employees.contains(ceo) == true) {
             int index = employees.indexOf(ceo);
-            if(employees.get(index+1).contains("CEO")){
+            if (employees.get(index + 1).contains("CEO")) {
                 isCEO = true;
             }
         }
@@ -142,33 +184,33 @@ public class CoverosWebsiteStepDefinitions {
     }
 
     @Then("^the confirmation message says (.*)$")
-    public void confirmEmailSent(){
+    public void confirmEmailSent() {
         System.out.print("confirmed");
     }
 
     @Then("^there (.*) training courses? available$")
-    public void trainingCourses(String available){
+    public void trainingCourses(String available) {
         boolean expected = true;
         boolean actual = true;
-       if(available.equals("are not") || available.equals("is not")){
-           expected = false;
-       }
+        if (available.equals("are not") || available.equals("is not")) {
+            expected = false;
+        }
         WebElement element = driver.findElement(By.id("evcalwidget_sc-3"));
         Actions builder = new Actions(driver);
         builder.moveToElement(element);
-        String [] scheduleText = element.getText().split("\n");
-        if(scheduleText[2].equals("No Events")){
+        String[] scheduleText = element.getText().split("\n");
+        if (scheduleText[2].equals("No Events")) {
             actual = false;
         }
         Assert.assertEquals(expected, actual);
     }
 
     @Then("^(.*) is listed$")
-    public void findEmployee(String employee){
+    public void findEmployee(String employee) {
         List<Employee> employees = selActions.loadEmployees();
         boolean isOnWebsite = false;
-        for(Employee e: employees){
-            if(e.getName().equals(employee)){
+        for (Employee e : employees) {
+            if (e.getName().equals(employee)) {
                 isOnWebsite = true;
             }
         }
@@ -176,9 +218,8 @@ public class CoverosWebsiteStepDefinitions {
     }
 
     @After
-    public void afterClass(){
-        if(driver != null)
-            driver.quit();
+    public void afterClass() {
+        if (driver != null) driver.quit();
     }
 
 }
