@@ -33,11 +33,11 @@ Background:
 #    When I go to the Agile Transformation page
 #    And I navigate to the Training Schedule
 #    Then there are training courses available
-
-#  Probably isn't Responsive to new blog posts being put up - identifier issue?
-Scenario: Get newest blog post date
-    When I go to the Blog page
-    Then the newest blog post is dated June 27, 2018
+#
+##  Probably isn't Responsive to new blog posts being put up - identifier issue?
+#Scenario: Get newest blog post date
+#    When I go to the Blog page
+#    Then the newest blog post is dated June 27, 2018
 #
 ##Webdriver code needs to be separated out
 #Scenario: Find the CEO of Coveros
@@ -50,10 +50,10 @@ Scenario: Get newest blog post date
 #    And I navigate to Everyone
 #    Then Jeff Payne is listed
 
-##  Can't find the share button on a presenation (xpaths issue)
-##  THEN Statement is unimplemented -> No point rn
-#Scenario: Email a Presentation
-#  When I go to the Presentations page
-#  And I email a presentation to rachel.mccown@coveros.com from Tester
-#  Then the confirmation message says "Some Stuff Here"
+#  Can't find the share button on a presenation (xpaths issue)
+#  THEN Statement is unimplemented -> No point rn
+Scenario: Email a Presentation
+  When I go to the Presentations page
+  And I email a presentation to rachel.mccown@coveros.com from Tester
+  Then the confirmation message says "Some Stuff Here"
 

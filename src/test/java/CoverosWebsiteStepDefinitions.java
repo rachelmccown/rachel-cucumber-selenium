@@ -116,13 +116,19 @@ public class CoverosWebsiteStepDefinitions {
     public void emailPresentation(String email, String from) {
 
         selActions.scrollToElement(driver.findElement(By.id("sidebar")));
-        WebDriverWait wait = new WebDriverWait(driver, 10);
-        WebElement presentation = wait.until(ExpectedConditions
-                .visibilityOfElementLocated(By.xpath("//*[@id=\"player\"]/div[2]/div/div[3]/button/i")));
-        driver.findElement(By.xpath("//*[@id=\"player\"]/div[2]/div/div[3]/button/i")).click();
-        presentation.click();
+        driver.switchTo().frame(0);
+        WebElement toolbar = driver.findElement(By.className("toolbar"));
+        WebElement jtools = toolbar.findElement(By.className("j-tools"));
+        jtools.findElement(By.tagName("button")).click();
+//        WebElement presentation = wait.until(ExpectedConditions
+//                .visibilityOfElementLocated(By.xpath("//*[@id=\"player\"]/div[2]/div/div[3]/button/i")));
+//        driver.findElement(By.xpath("//*[@id=\"player\"]/div[2]/div/div[3]/button/i")).click();
+//        presentation.click();
         driver.findElement(By.id("share-email-to")).sendKeys(email);
         driver.findElement(By.id("share-email-name")).sendKeys(from);
+
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("share-email-send")));
         driver.findElement(By.id("share-email-send")).click();
     }
 
@@ -184,7 +190,7 @@ public class CoverosWebsiteStepDefinitions {
     }
 
     @Then("^the confirmation message says (.*)$")
-    public void confirmEmailSent() {
+    public void confirmEmailSent(String something) {
         System.out.print("confirmed");
     }
 
