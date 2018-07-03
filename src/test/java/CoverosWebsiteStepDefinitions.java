@@ -5,7 +5,6 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
@@ -39,7 +38,13 @@ public class CoverosWebsiteStepDefinitions {
             case("Edge"): WebDriverManager.edgedriver().setup(); driver = new EdgeDriver(); break;
             default: driver = new HtmlUnitDriver(); ((HtmlUnitDriver) driver).setJavascriptEnabled(true);  break;
         }
-        //driver.manage().window().setSize(new Dimension());
+        String size = System.getProperty("size");
+        if (size != null) {
+            driver.manage().window()
+                    .setSize(new Dimension(Integer.valueOf(size.split("x")[0]), Integer.valueOf(size.split("x")[1])));
+        } else {
+            driver.manage().window().maximize();
+        }
         selActions = new SeleniumImplementations(driver);
     }
 
@@ -172,10 +177,11 @@ public class CoverosWebsiteStepDefinitions {
 
     @Then("^(.*) is listed$")
     public void findEmployee(String employee){
-        List<Employee> employees = selActions.loadEmployees();
         boolean isOnWebsite = false;
-        for(Employee e: employees){
-            if(e.getName().equals(employee)){
+        WebElement element = driver.findElement(By.id("team"));
+        List<String> employees = Arrays.asList(element.getText().split("\n"));
+        for(String s: employees){
+            if(s.equals(employee)){
                 isOnWebsite = true;
             }
         }

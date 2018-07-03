@@ -6,13 +6,10 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 public class SeleniumImplementations {
 
     WebDriver driver;
+    boolean responsiveHeaderVisible = false;
 
     public SeleniumImplementations(WebDriver driver){
         this.driver = driver;
@@ -25,9 +22,10 @@ public class SeleniumImplementations {
     }
 
     public void navigateMenu(){
-        WebElement element = driver.findElement(By.xpath("//*[@id=\"header\"]/div[1]/div/div/div[2]/button/i"));
+        WebElement element = driver.findElement(By.className("fa-bars"));
         if(element.isDisplayed()){
             element.click();
+            responsiveHeaderVisible = true;
         }
     }
 
@@ -51,7 +49,7 @@ public class SeleniumImplementations {
                 System.out.println("Object not Found");
                 break;
         }
-        if (hoverObject != null){
+        if (hoverObject != null && responsiveHeaderVisible == false){
             action.moveToElement(hoverObject).build().perform();
         }
     }
@@ -59,6 +57,7 @@ public class SeleniumImplementations {
     public void click(String obj){
 
         WebDriverWait wait = new WebDriverWait(driver, 10);
+        navigateMenu();
         switch (obj) {
             case("SecureCI"): hover("Products");driver.findElement(By.linkText("SecureCI")).click(); break;
             case("Selenified"): hover("Products"); wait.until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Selenified"))); driver.findElement(By.linkText("Selenified")).click(); break;
@@ -72,21 +71,6 @@ public class SeleniumImplementations {
             case("Agile Transformation"): hover("Services"); driver.findElement(By.linkText("Agile Transformation")).click(); break;
             default: System.out.println("Page Object not Found"); break;
         }
-    }
-
-    /**
-     * Create a list of employees shown on the coveros website
-     */
-    public List<Employee> loadEmployees(){
-
-        List <Employee> employees = new ArrayList<Employee>();
-        WebElement element = driver.findElement(By.id("team"));
-        List<String> temp2 = Arrays.asList(element.getText().split("\n"));
-        for(int i = 8; i < temp2.size(); i+=4){
-            employees.add(new Employee(temp2.get(i), temp2.get(i+1), temp2.get(i+2)));
-        }
-        System.out.println("Done");
-        return employees;
     }
 
 }

@@ -12,6 +12,7 @@ Scenario: SecureCI Submission Message Success
     And I download SecureCI
     Then the SecureCI confirmation message says "Your message was sent successfully. Thanks."
 
+    @TestForResponse
 Scenario: View Recent Blog Posts
     When I go to the Blog page
     Then the page displays Recent Blogs
@@ -43,7 +44,7 @@ Scenario: Find the CEO of Coveros
     When I go to the Our Team page
     Then the COO should be Dave Burke
 
-@debug
+    @debug
 Scenario: Find a specific employee on the website
     When I go to the Our Team page
     And I navigate to Everyone
