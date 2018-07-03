@@ -1,6 +1,6 @@
 Feature: Navigating Coveros Website
 
-Background:
+  Background:
     Given I open the Coveros website
 
 #Scenario: SecureCI Submission Message Success
@@ -40,27 +40,29 @@ Background:
 #    Then the newest blog post is dated June 27, 2018
 #
 #Webdriver code needs to be separated out
-Scenario Outline: Find the CEO of Coveros
+  @about-us
+  Scenario Outline: Find the CEO of Coveros
     When I go to the Our Team page
     Then the <position> should be <person>
 
-  Examples:
-  |position|person|
-  |CEO     |Jeff Payne|
-  |CTO     |Tom Steim |
-  |COO     |Dave Burke|
+    Examples:
+      | position | person     |
+      | CEO      | Jeff Payne |
+      | CTO      | Tom Steim  |
+      | COO      | Dave Burke |
 
 #
 ## Issue with looking at 'Everuone' on Employee page (xpaths issue)
-#Scenario: Find a specific employee on the website
-#    When I go to the Our Team page
-#    And I navigate to Everyone
-#    Then Jeff Payne is listed
+  @about-us
+  Scenario: Find a specific employee on the website
+    When I go to the Our Team page
+    And I navigate to Everyone
+    Then Jeff Payne is listed
 
 #  Can't find the share button on a presenation (xpaths issue)
 #  THEN Statement is unimplemented -> No point rn
-Scenario: Email a Presentation
-  When I go to the Presentations page
-  And I email a presentation to rachel.mccown@coveros.com from Tester
-  Then the confirmation message says "Some Stuff Here"
+  Scenario: Email a Presentation
+    When I go to the Presentations page
+    And I email a presentation to rachel.mccown@coveros.com from Tester
+    Then the confirmation message says "Some Stuff Here"
 

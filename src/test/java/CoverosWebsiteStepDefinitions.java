@@ -22,45 +22,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class CoverosWebsiteStepDefinitions {
+public class CoverosWebsiteStepDefinitions extends StepClass {
 
-    WebDriver driver;
-    SeleniumImplementations selActions;
-
-    @Before
-    public void openBrowser() {
-        String browser = System.getProperty("browser");
-        if (browser == null) {
-            browser = "";
-        }
-        switch (browser) {
-            case ("Chrome"):
-                WebDriverManager.chromedriver().setup();
-                driver = new ChromeDriver();
-                break;
-            case ("Firefox"):
-                WebDriverManager.firefoxdriver().setup();
-                driver = new FirefoxDriver();
-                break;
-            case ("Edge"):
-                WebDriverManager.edgedriver().setup();
-                driver = new EdgeDriver();
-                break;
-            default:
-                HtmlUnitDriver htmlunit = new HtmlUnitDriver();
-                htmlunit.setJavascriptEnabled(true);
-                driver = htmlunit;
-                break;
-        }
-        String size = System.getProperty("size");
-        if (size != null) {
-            driver.manage().window()
-                    .setSize(new Dimension(Integer.valueOf(size.split("x")[0]), Integer.valueOf(size.split("x")[1])));
-        } else {
-            driver.manage().window().maximize();
-        }
-        selActions = new SeleniumImplementations(driver);
-    }
 
     @When("^I open the Coveros website$")
     public void goToCoveros() {
@@ -221,11 +184,6 @@ public class CoverosWebsiteStepDefinitions {
             }
         }
         Assert.assertTrue(isOnWebsite);
-    }
-
-    @After
-    public void afterClass() {
-        if (driver != null) driver.quit();
     }
 
 }
