@@ -24,6 +24,13 @@ public class SeleniumImplementations {
         wait.until(ExpectedConditions.visibilityOf(element));
     }
 
+    public void navigateMenu(){
+        WebElement element = driver.findElement(By.xpath("//*[@id=\"header\"]/div[1]/div/div/div[2]/button/i"));
+        if(element.isDisplayed()){
+            element.click();
+        }
+    }
+
     public void hover(String obj) {
         Actions action = new Actions(driver);
         WebElement hoverObject = null;

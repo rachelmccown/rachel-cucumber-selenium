@@ -4,7 +4,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(features="src/test/resources/features",
-        format = {"pretty", "html:target/cucumber"})
-//, glue = {"rachel-cucumber-selenium"}
+        format = {"pretty", "html:target/cucumber"},
+        tags = {"@debug"})
 
 public class RunIT { }

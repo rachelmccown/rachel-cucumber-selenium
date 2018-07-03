@@ -7,6 +7,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -36,8 +37,9 @@ public class CoverosWebsiteStepDefinitions {
             case("Chrome"): WebDriverManager.chromedriver().setup(); driver = new ChromeDriver(); break;
             case("Firefox"): WebDriverManager.firefoxdriver().setup(); driver = new FirefoxDriver(); break;
             case("Edge"): WebDriverManager.edgedriver().setup(); driver = new EdgeDriver(); break;
-            default: WebDriverManager.chromedriver().setup(); driver = new ChromeDriver(); break;
+            default: driver = new HtmlUnitDriver(); ((HtmlUnitDriver) driver).setJavascriptEnabled(true);  break;
         }
+        //driver.manage().window().setSize(new Dimension());
         selActions = new SeleniumImplementations(driver);
     }
 
@@ -64,11 +66,13 @@ public class CoverosWebsiteStepDefinitions {
     }
 
     @And("^I navigate to Everyone$")
-    public void navigateToEveryone(){
+    public void navigateToEveryone() {
         selActions.scrollToElement(driver.findElement(By.id("team")));
+        WebElement controls = driver.findElement(By.className("filter-controls"));
         WebDriverWait wait = new WebDriverWait(driver, 10);
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("team")));
-        driver.findElement(By.xpath("//*[@id=\"ats-layout-7266\"]/ul[1]/li[1]/div")).click();
+        WebElement everyoneButton = controls.findElement(By.className("ats-button"));
+        everyoneButton.click();
+        wait.until(ExpectedConditions.visibilityOf(controls.findElement(By.className("ats-button ats-button-active"))));
     }
 
     @And("^I download SecureCI$")
@@ -86,12 +90,15 @@ public class CoverosWebsiteStepDefinitions {
     public void emailPresentation(String email, String from){
 
         selActions.scrollToElement(driver.findElement(By.id("sidebar")));
-        WebDriverWait wait = new WebDriverWait(driver, 10);
-        WebElement presentation = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"player\"]/div[2]/div/div[3]/button/i")));
-        driver.findElement(By.xpath("//*[@id=\"player\"]/div[2]/div/div[3]/button/i")).click();
-        presentation.click();
+        driver.switchTo().frame(0);
+        WebElement toolbar = driver.findElement(By.className("toolbar"));
+        WebElement jtools = toolbar.findElement(By.className("j-tools"));
+        jtools.findElement(By.tagName("button")).click();
+
         driver.findElement(By.id("share-email-to")).sendKeys(email);
         driver.findElement(By.id("share-email-name")).sendKeys(from);
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("share-email-send")));
         driver.findElement(By.id("share-email-send")).click();
     }
 
@@ -120,30 +127,30 @@ public class CoverosWebsiteStepDefinitions {
     @Then("^the newest blog post is dated (.*)$")
     public void checkBlogDate(String date){
         selActions.scrollToElement(driver.findElement(By.id("sidebar")));
-        //driver.findElement(By.linkText("Read More")).click();
-        WebElement element = driver.findElement(By.xpath("//*[@id=\"post-8940\"]/div[2]/span[2]/time"));
-        String pageDate = element.getText();
-        Assert.assertEquals(date, pageDate);
+        WebElement article = driver.findElement(By.tagName("article"));
+        WebElement metadata = article.findElement(By.className("blog-post-meta"));
+        WebElement dateElement = metadata.findElement(By.className("post-meta-time"));
+        Assert.assertEquals(date, dateElement.getText());
     }
 
-    @Then("^the CEO should be (.*)$")
-    public void ceoCheck(String ceo){
+    @Then("^the (.*) should be (.*)$")
+    public void ceoCheck(String position, String employee){
 
-        boolean isCEO = false;
+        boolean isPos = false;
         WebElement element = driver.findElement(By.id("team"));
         List<String> employees = Arrays.asList(element.getText().split("\n"));
-        if(employees.contains(ceo) == true){
-            int index = employees.indexOf(ceo);
-            if(employees.get(index+1).contains("CEO")){
-                isCEO = true;
+        if(employees.contains(employee) == true){
+            int index = employees.indexOf(employee);
+            if(employees.get(index+1).contains(position)){
+                isPos = true;
             }
         }
-        Assert.assertEquals(true, isCEO);
+        Assert.assertEquals(true, isPos);
     }
 
     @Then("^the confirmation message says (.*)$")
-    public void confirmEmailSent(){
-        System.out.print("confirmed");
+    public void confirmEmailSent(String confirmation){
+        //TODO Implement Method
     }
 
     @Then("^there (.*) training courses? available$")
