@@ -39,10 +39,17 @@ Background:
 #    When I go to the Blog page
 #    Then the newest blog post is dated June 27, 2018
 #
-##Webdriver code needs to be separated out
-#Scenario: Find the CEO of Coveros
-#    When I go to the Our Team page
-#    Then the CEO should be Jeff Payne
+#Webdriver code needs to be separated out
+Scenario Outline: Find the CEO of Coveros
+    When I go to the Our Team page
+    Then the <position> should be <person>
+
+  Examples:
+  |position|person|
+  |CEO     |Jeff Payne|
+  |CTO     |Tom Steim |
+  |COO     |Dave Burke|
+
 #
 ## Issue with looking at 'Everuone' on Employee page (xpaths issue)
 #Scenario: Find a specific employee on the website
