@@ -12,7 +12,6 @@ Scenario: SecureCI Submission Message Success
     And I download SecureCI
     Then the SecureCI confirmation message says "Your message was sent successfully. Thanks."
 
-    @TestForResponse
 Scenario: View Recent Blog Posts
     When I go to the Blog page
     Then the page displays Recent Blogs
@@ -39,7 +38,6 @@ Scenario: Get newest blog post date
     When I go to the Blog page
     Then the newest blog post is dated June 27, 2018
 
-    @revise
 Scenario: Find the CEO of Coveros
     When I go to the Our Team page
     Then the COO should be Dave Burke

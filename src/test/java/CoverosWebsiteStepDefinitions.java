@@ -77,7 +77,8 @@ public class CoverosWebsiteStepDefinitions {
         WebDriverWait wait = new WebDriverWait(driver, 10);
         WebElement everyoneButton = controls.findElement(By.className("ats-button"));
         everyoneButton.click();
-        wait.until(ExpectedConditions.visibilityOf(controls.findElement(By.className("ats-button ats-button-active"))));
+        wait.until(ExpectedConditions.elementToBeSelected(everyoneButton));
+        //System.out.println("Clicked Button");
     }
 
     @And("^I download SecureCI$")
@@ -177,6 +178,7 @@ public class CoverosWebsiteStepDefinitions {
 
     @Then("^(.*) is listed$")
     public void findEmployee(String employee){
+
         boolean isOnWebsite = false;
         WebElement element = driver.findElement(By.id("team"));
         List<String> employees = Arrays.asList(element.getText().split("\n"));
